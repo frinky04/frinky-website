@@ -1,0 +1,95 @@
+@media (max-width: 900px) {
+  .frame {
+    padding: 14px;
+  }
+
+  .inner {
+    padding: 14px;
+  }
+
+  .feature-body {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-window {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 0 8px;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .nav-left,
+  .nav-right {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .section-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 640px) {
+  .frame {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .inner {
+    padding: 12px;
+  }
+
+  .catalogue-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .list li {
+    grid-template-columns: 100px 1fr;
+    grid-template-areas:
+      "date text"
+      "meta meta";
+  }
+
+  .list .date {
+    grid-area: date;
+  }
+
+  .list .link {
+    grid-area: text;
+  }
+
+  .list .meta {
+    grid-area: meta;
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .feature-window {
+    min-height: 180px;
+  }
+
+  .list li {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "text"
+      "date"
+      "meta";
+    row-gap: 4px;
+  }
+
+  .list .date {
+    text-align: left;
+  }
+}

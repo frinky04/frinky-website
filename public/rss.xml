@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Frinky</title>
+  <link>https://frinky.org</link>
+  <description>Frinky&apos;s portfolio of games, updates, and development posts.</description>
+  <atom:link href="https://frinky.org/rss.xml" rel="self" type="application/rss+xml" />
+  <lastBuildDate>Mon, 16 Mar 2026 05:47:48 GMT</lastBuildDate>
+  <item>
+    <title>Bang Shoot</title>
+    <link>https://frinky.org/games/bang-shoot/</link>
+    <guid>https://frinky.org/games/bang-shoot/</guid>
+    <description>A fast-paced arena shooter where you wield two weapons at once across unique battlegrounds.</description>
+    <pubDate>Thu, 31 Dec 2026 00:00:00 GMT</pubDate>
+    <category>Game</category>
+  </item>
+  <item>
+    <title>LuaRuntime Plugin (UE 5.7)</title>
+    <link>https://frinky.org/posts/luaruntime-release/</link>
+    <guid>https://frinky.org/posts/luaruntime-release/</guid>
+    <description>The LuaRuntime plugin for Unreal Engine 5.7 is now public.</description>
+    <pubDate>Thu, 11 Dec 2025 00:00:00 GMT</pubDate>
+    <category>Post</category>
+  </item>
+  <item>
+    <title>How to wipe your Transience save</title>
+    <link>https://frinky.org/posts/transience-wipe-save/</link>
+    <guid>https://frinky.org/posts/transience-wipe-save/</guid>
+    <description>Steps to wipe your save files to fix launch issues and reset progress.</description>
+    <pubDate>Tue, 09 Dec 2025 00:00:00 GMT</pubDate>
+    <category>Post</category>
+  </item>
+  <item>
+    <title>New website</title>
+    <link>https://frinky.org/posts/website-release/</link>
+    <guid>https://frinky.org/posts/website-release/</guid>
+    <description>Released a new version of the website.</description>
+    <pubDate>Sun, 07 Dec 2025 00:00:00 GMT</pubDate>
+    <category>Post</category>
+  </item>
+  <item>
+    <title>Transience</title>
+    <link>https://frinky.org/games/transience/</link>
+    <guid>https://frinky.org/games/transience/</guid>
+    <description>Become an Accountant - a hired mercenary who keeps the books balanced by any means necessary.</description>
+    <pubDate>Fri, 05 Dec 2025 00:00:00 GMT</pubDate>
+    <category>Game</category>
+  </item>
+  <item>
+    <title>Screen Wrap</title>
+    <link>https://frinky.org/games/screen-wrap/</link>
+    <guid>https://frinky.org/games/screen-wrap/</guid>
+    <description>A short top-down atmospheric puzzle game about boundary warp and screen wrap.</description>
+    <pubDate>Sat, 02 Aug 2025 00:00:00 GMT</pubDate>
+    <category>Game</category>
+  </item>
+  <item>
+    <title>Dishwashing Simulator</title>
+    <link>https://frinky.org/games/dishwashing-simulator/</link>
+    <guid>https://frinky.org/games/dishwashing-simulator/</guid>
+    <description>A short, unique survival-farming-base-building-tycoon-horror game where washing dishes is the core loop.</description>
+    <pubDate>Wed, 03 Apr 2024 00:00:00 GMT</pubDate>
+    <category>Game</category>
+  </item>
+  <item>
+    <title>Infinite Golf</title>
+    <link>https://frinky.org/games/infinite-golf/</link>
+    <guid>https://frinky.org/games/infinite-golf/</guid>
+    <description>A zen-like golf experience where you can relax while sinking shots.</description>
+    <pubDate>Wed, 07 Feb 2024 00:00:00 GMT</pubDate>
+    <category>Game</category>
+  </item>
+  <item>
+    <title>Ground Unbound</title>
+    <link>https://frinky.org/games/ground-unbound/</link>
+    <guid>https://frinky.org/games/ground-unbound/</guid>
+    <description>A procedurally generated, high-intensity movement shooter with roguelike progression.</description>
+    <pubDate>Fri, 08 Oct 2021 00:00:00 GMT</pubDate>
+    <category>Game</category>
+  </item>
+  <item>
+    <title>Chaos</title>
+    <link>https://frinky.org/games/chaos/</link>
+    <guid>https://frinky.org/games/chaos/</guid>
+    <description>An online FPS focused on destruction, explosions, and arcade chaos.</description>
+    <pubDate>Tue, 28 Apr 2020 00:00:00 GMT</pubDate>
+    <category>Game</category>
+  </item>
+  <item>
+    <title>I was born</title>
+    <link>https://frinky.org/posts/birth/</link>
+    <guid>https://frinky.org/posts/birth/</guid>
+    <description>Spawned into the world on this day.</description>
+    <pubDate>Fri, 24 Sep 2004 00:00:00 GMT</pubDate>
+    <category>Post</category>
+  </item>
+</channel>
+</rss>
