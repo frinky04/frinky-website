@@ -29,45 +29,40 @@
           </div>
         </section>
 
-        <section class="page-section" id="section-home">
+        <div class="page-section" id="section-home">
           <section class="intro" id="home">
-            <p>
-              Weclome to my website. I like to make silly little games. I also like producing music in my spare time. My favorite genre's are horror and shooters. 
-            </p>
-            <p>
-              Check out some of the game's I've made.
-            </p>
+            <div id="home-intro-content"></div>
           </section>
 
-        <section class="section games">
-          <div class="section-head">
-            <h2>Games</h2>
-            <a href="#" class="view-all" data-action="view-all-games">view all</a>
-          </div>
-        <div class="catalogue-grid">
-          <div class="feature-card">
-            <div class="feature-header">LATEST</div>
-            <div class="feature-body">
-                <div class="feature-window">
-                  <div class="scanlines"></div>
-                  <div class="feature-overlay">
-                    <div class="feature-title" data-slot="feature-title">example project</div>
+          <section class="section games">
+            <div class="section-head">
+              <h2>Games</h2>
+              <a href="#" class="view-all" data-action="view-all-games">view all</a>
+            </div>
+            <div class="catalogue-grid">
+              <div class="feature-card">
+                <div class="feature-header">LATEST</div>
+                <div class="feature-body">
+                  <div class="feature-window">
+                    <div class="scanlines"></div>
+                    <div class="feature-overlay">
+                      <div class="feature-title" data-slot="feature-title">example project</div>
+                    </div>
                   </div>
+                  <div class="feature-blurb" id="feature-blurb"></div>
                 </div>
-                <div class="feature-blurb" id="feature-blurb"></div>
               </div>
             </div>
-          </div>
-          <ul class="list" id="games-list" data-feed="games"></ul>
-        </section>
+            <ul class="list" id="games-list" data-feed="games"></ul>
+          </section>
 
-        <section class="section posts">
-          <div class="section-head">
-            <h2>Posts</h2>
-            <a href="#" class="view-all" data-action="view-all-posts">view all</a>
-          </div>
-          <ul class="list" id="registry-list" data-feed="posts"></ul>
-        </section>
+          <section class="section posts">
+            <div class="section-head">
+              <h2>Posts</h2>
+              <a href="#" class="view-all" data-action="view-all-posts">view all</a>
+            </div>
+            <ul class="list" id="registry-list" data-feed="posts"></ul>
+          </section>
 
           <section class="section experience">
             <div class="section-head">
@@ -75,7 +70,7 @@
             </div>
             <ul class="list" id="experience-list" data-feed="experience"></ul>
           </section>
-        </section>
+        </div>
 
         <section class="page-section section posts hidden" id="section-posts-all">
           <div class="section-head">
@@ -101,19 +96,15 @@
             <div class="feature-header">ABOUT</div>
             <div class="feature-body">
               <div class="feature-window about-window" role="img" aria-label="Frog illustration for Finn Rawlings">
-                <img src="/images/frog.png" alt="" class="about-image" />
+                <img src="/images/frog.png" alt="" class="about-image" id="about-image" />
                 <div class="feature-overlay">
 
                 </div>
               </div>
               <div class="feature-blurb">
+                <div class="feature-blurb-title" id="about-name">Finn Rawlings (Frinky)</div>
                 <div class="blurb-body">
-                  <div class="feature-title">Finn Rawlings (Frinky)</div>
-                  <br>
-                  <p class="body-text">I'm from Australia.</p>
-                  <p class="body-text">Like to make games, I also like playing games. Big fan of Horror and FPS.</p>
-                  <p class="body-text">I like to make music in my spare time.</p>
-                  
+                  <div class="about-content" id="about-content"></div>
                 </div>
                 <div class="detail-meta" id="about-age"></div>
               </div>
@@ -126,7 +117,7 @@
           <div class="section-head">
             <h2>Contact</h2>
           </div>
-          <p>Best methods to reach me: </p>
+          <p style="margin: 0 0 12px;">Best methods to reach me:</p>
           <div class="contact-actions">
             <a class="social-button twitter" href="https://x.com/frinky13" target="_blank" rel="noopener noreferrer">
               <span class="social-icon" aria-hidden="true">

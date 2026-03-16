@@ -70,7 +70,6 @@
   background: linear-gradient(#131313, #0c0c0c);
   border: 1px solid #202020;
   box-shadow: inset 0 0 0 1px #0a0a0a;
-  margin-bottom: 12px;
 }
 
 .feature-header,
@@ -94,6 +93,7 @@
   grid-template-columns: 3fr 2fr;
   gap: 12px;
   align-items: stretch;
+  padding: 10px;
 }
 
 .feature-window {
@@ -150,8 +150,29 @@
   margin-bottom: 0;
 }
 
+.about-content {
+  font-size: 13px;
+  color: #d2d2d2;
+  line-height: 1.5;
+}
+
+.about-content p {
+  margin: 0 0 8px;
+}
+
+.about-content p:last-child {
+  margin-bottom: 0;
+}
+
 .feature-window.clickable {
   cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.feature-window.clickable:hover,
+.feature-window.clickable:focus-visible {
+  border-color: #3f8cff;
+  box-shadow: inset 0 0 20px rgba(63, 140, 255, 0.08);
 }
 
 .feature-window::before,
@@ -247,11 +268,7 @@
 }
 
 .about-window {
-  background-image: url("/images/frog.png"),
-    linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.75) 100%);
-  background-size: cover, cover;
-  background-position: center, center;
-  background-blend-mode: normal, overlay;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.75) 100%);
 }
 
 .about-image {
@@ -286,7 +303,7 @@
 
 .list li {
   display: grid;
-  grid-template-columns: 120px 1fr 240px;
+  grid-template-columns: 120px 1fr minmax(0, 200px);
   align-items: center;
   padding: 6px 0;
   border-bottom: 1px solid #111;

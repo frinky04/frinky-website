@@ -14,6 +14,8 @@ const OUTPUT_FILE = path.join(ROOT, "src", "generated", "content.generated.js");
 const PUBLIC_DIR = path.join(ROOT, "public");
 const STATIC_DIRS = ["images", "svgs"];
 
+const DEFAULT_SITE_DESCRIPTION = "Frinky's portfolio of games, updates, and development posts.";
+
 function normalizeBaseUrl(rawValue) {
   const value = (rawValue || "").trim();
   if (!value) return "";
@@ -24,9 +26,8 @@ function normalizeBaseUrl(rawValue) {
 const RAILWAY_PUBLIC_DOMAIN = process.env.RAILWAY_PUBLIC_DOMAIN || "";
 const SITE_URL = normalizeBaseUrl(RAILWAY_PUBLIC_DOMAIN) || "https://frinky.org";
 
-const SITE = {
+const SITE_BASE = {
   name: "Frinky",
-  // description: "Frinky's portfolio of games, updates, and development posts.",
   author: "Finn Rawlings",
   url: SITE_URL,
 };
@@ -43,7 +44,7 @@ const COLLECTIONS = [
   { type: "game", dir: "games" },
 ];
 
-const baseFrontmatterSchema = z
+const postGameFrontmatterSchema = z
   .object({
     title: z.string().min(1),
     slug: z.string().regex(/^[a-z0-9-]+$/),
@@ -59,10 +60,32 @@ const baseFrontmatterSchema = z
   .strict();
 
 const frontmatterSchemas = {
-  post: baseFrontmatterSchema,
-  game: baseFrontmatterSchema.extend({
+  post: postGameFrontmatterSchema,
+  game: postGameFrontmatterSchema.extend({
     image: z.string().min(1),
   }),
+  experience: z
+    .object({
+      title: z.string().min(1),
+      date: z.string().min(1),
+      meta: z.string().optional(),
+      order: z.number().int().optional(),
+    })
+    .strict(),
+  home: z
+    .object({
+      title: z.string().optional(),
+      summary: z.string().optional(),
+    })
+    .strict(),
+  about: z
+    .object({
+      name: z.string().min(1),
+      birthDate: z.string().optional(),
+      image: z.string().optional(),
+      imageAlt: z.string().optional(),
+    })
+    .strict(),
 };
 
 function normalizeUrl(url) {
@@ -197,14 +220,27 @@ function compareEntries(a, b) {
   return a.title.localeCompare(b.title);
 }
 
+function compareExperience(a, b) {
+  const aHasOrder = typeof a.order === "number";
+  const bHasOrder = typeof b.order === "number";
+  if (aHasOrder && bHasOrder && a.order !== b.order) return a.order - b.order;
+  if (aHasOrder !== bHasOrder) return aHasOrder ? -1 : 1;
+  return a.title.localeCompare(b.title);
+}
+
 function routeForEntry(entry) {
   if (entry.type === "post") return `/posts/${entry.slug}/`;
   if (entry.type === "game") return `/games/${entry.slug}/`;
   return "/";
 }
 
-function parseFrontmatter(type, data, fullPath) {
-  const parsed = frontmatterSchemas[type].safeParse(data);
+function parseFrontmatter(type, data, sourcePath) {
+  const schema = frontmatterSchemas[type];
+  if (!schema) {
+    throw new Error(`Unsupported frontmatter schema type '${type}' for ${sourcePath}`);
+  }
+
+  const parsed = schema.safeParse(data);
   if (parsed.success) return parsed.data;
 
   const issues = parsed.error.issues
@@ -214,7 +250,7 @@ function parseFrontmatter(type, data, fullPath) {
     })
     .join("; ");
 
-  throw new Error(`Invalid frontmatter in ${fullPath}: ${issues}`);
+  throw new Error(`Invalid frontmatter in ${sourcePath}: ${issues}`);
 }
 
 function outputEntry(entry) {
@@ -237,6 +273,13 @@ function outputEntry(entry) {
   return out;
 }
 
+async function readMarkdownFile(filePath, type) {
+  const raw = await fs.readFile(filePath, "utf8");
+  const { data, content } = matter(raw);
+  const frontmatter = parseFrontmatter(type, data, filePath);
+  return { frontmatter, content };
+}
+
 async function readCollection({ type, dir }) {
   const collectionDir = path.join(PAGES_DIR, dir);
   const files = (await fs.readdir(collectionDir)).filter((name) => name.endsWith(".md")).sort();
@@ -246,10 +289,7 @@ async function readCollection({ type, dir }) {
 
   for (const fileName of files) {
     const fullPath = path.join(collectionDir, fileName);
-    const raw = await fs.readFile(fullPath, "utf8");
-    const { data, content } = matter(raw);
-
-    const frontmatter = parseFrontmatter(type, data, fullPath);
+    const { frontmatter, content } = await readMarkdownFile(fullPath, type);
     const slug = frontmatter.slug;
 
     if (seenSlugs.has(slug)) {
@@ -281,20 +321,65 @@ async function readCollection({ type, dir }) {
   return entries;
 }
 
+async function readExperienceCollection() {
+  const collectionDir = path.join(PAGES_DIR, "experience");
+  const files = (await fs.readdir(collectionDir)).filter((name) => name.endsWith(".md")).sort();
+
+  const entries = [];
+  for (const fileName of files) {
+    const fullPath = path.join(collectionDir, fileName);
+    const { frontmatter } = await readMarkdownFile(fullPath, "experience");
+
+    entries.push({
+      title: frontmatter.title.trim(),
+      date: frontmatter.date.trim(),
+      meta: (frontmatter.meta || "").trim(),
+      order: frontmatter.order ?? null,
+    });
+  }
+
+  return entries.sort(compareExperience);
+}
+
+async function readHomePage() {
+  const fullPath = path.join(PAGES_DIR, "home.md");
+  const { frontmatter, content } = await readMarkdownFile(fullPath, "home");
+  const summary = frontmatter.summary?.trim() || stripMarkdownExcerpt(content) || DEFAULT_SITE_DESCRIPTION;
+
+  return {
+    title: (frontmatter.title || "Home").trim(),
+    summary,
+    contentHtml: sanitizeAndRenderMarkdown(content),
+  };
+}
+
+async function readAboutPage() {
+  const fullPath = path.join(PAGES_DIR, "about.md");
+  const { frontmatter, content } = await readMarkdownFile(fullPath, "about");
+
+  return {
+    name: frontmatter.name.trim(),
+    birthDate: (frontmatter.birthDate || "").trim(),
+    image: normalizeUrl(frontmatter.image || "/images/frog.png"),
+    imageAlt: (frontmatter.imageAlt || "").trim(),
+    contentHtml: sanitizeAndRenderMarkdown(content),
+  };
+}
+
 async function writeSitemap(payload) {
   const nowIso = new Date().toISOString();
   const staticPaths = ["/", "/about/", "/contact/", "/posts/", "/games/"];
   const contentPaths = [...payload.posts, ...payload.games].map((entry) => routeForEntry(entry));
 
   const urls = [...new Set([...staticPaths, ...contentPaths])]
-    .map((route) => `  <url><loc>${escapeXml(`${SITE.url}${route}`)}</loc><lastmod>${nowIso}</lastmod></url>`)
+    .map((route) => `  <url><loc>${escapeXml(`${SITE_URL}${route}`)}</loc><lastmod>${nowIso}</lastmod></url>`)
     .join("\n");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
   await fs.writeFile(path.join(PUBLIC_DIR, "sitemap.xml"), xml, "utf8");
 }
 
-async function writeRss(payload) {
+async function writeRss(payload, site) {
   const entries = [...payload.posts, ...payload.games].sort(
     (a, b) => (toEpoch(b.sortDate || b.date) || 0) - (toEpoch(a.sortDate || a.date) || 0)
   );
@@ -302,7 +387,7 @@ async function writeRss(payload) {
   const itemsXml = entries
     .map((entry) => {
       const route = entry.type === "post" ? `/posts/${entry.slug}/` : `/games/${entry.slug}/`;
-      const link = `${SITE.url}${route}`;
+      const link = `${site.url}${route}`;
       const pubDate = new Date(toEpoch(entry.sortDate || entry.date) || Date.now()).toUTCString();
       const category = entry.type === "post" ? "Post" : "Game";
 
@@ -323,9 +408,10 @@ async function writeRss(payload) {
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
     "<channel>",
-    `  <title>${escapeXml(SITE.name)}</title>`,
-    `  <link>${escapeXml(SITE.url)}</link>`,
-    `  <atom:link href="${escapeXml(`${SITE.url}/rss.xml`)}" rel="self" type="application/rss+xml" />`,
+    `  <title>${escapeXml(site.name)}</title>`,
+    `  <link>${escapeXml(site.url)}</link>`,
+    `  <description>${escapeXml(site.description || DEFAULT_SITE_DESCRIPTION)}</description>`,
+    `  <atom:link href="${escapeXml(`${site.url}/rss.xml`)}" rel="self" type="application/rss+xml" />`,
     `  <lastBuildDate>${escapeXml(new Date().toUTCString())}</lastBuildDate>`,
     itemsXml,
     "</channel>",
@@ -336,8 +422,8 @@ async function writeRss(payload) {
   await fs.writeFile(path.join(PUBLIC_DIR, "rss.xml"), rss, "utf8");
 }
 
-async function writeRobots() {
-  const robots = `User-agent: *\nAllow: /\nSitemap: ${SITE.url}/sitemap.xml\n`;
+async function writeRobots(site) {
+  const robots = `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`;
   await Promise.all([
     fs.writeFile(path.join(PUBLIC_DIR, "robots.txt"), robots, "utf8"),
     fs.writeFile(path.join(ROOT, "robots.txt"), robots, "utf8"),
@@ -396,11 +482,23 @@ export async function generateContent() {
   const featuredCandidates = games.filter((item) => item.featured).sort(compareEntries);
   const featured = featuredCandidates[0] || games[0] || null;
 
+  const home = await readHomePage();
+  const about = await readAboutPage();
+  const experience = await readExperienceCollection();
+
+  const site = {
+    ...SITE_BASE,
+    description: home.summary || DEFAULT_SITE_DESCRIPTION,
+  };
+
   const payload = {
-    site: SITE,
+    site,
     posts: posts.map(outputEntry),
     games: games.map(outputEntry),
     featured: featured ? outputEntry(featured) : null,
+    experience,
+    home,
+    about,
   };
 
   await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
@@ -413,7 +511,7 @@ export async function generateContent() {
     "utf8"
   );
 
-  await Promise.all([writeSitemap(payload), writeRss(payload), writeRobots()]);
+  await Promise.all([writeSitemap(payload), writeRss(payload, site), writeRobots(site)]);
 
   return payload;
 }

@@ -172,14 +172,48 @@ export function createUI({ model, onOpenDetail, onNavigateSection }) {
     buildList(feeds.experience, expList);
   }
 
-  function renderAboutAge() {
-    const metaEl = document.querySelector("#about-age");
-    if (!metaEl) return;
+  function renderHomeIntro() {
+    const homeIntroEl = document.querySelector("#home-intro-content");
+    if (!homeIntroEl) return;
+    homeIntroEl.innerHTML = withExternalLinkAttrs(model.home?.contentHtml || "");
+  }
 
-    const birthDate = "24 Sep 2004";
-    const age = yearsAgo(birthDate);
-    const suffix = typeof age === "number" && age >= 0 ? ` (${age} years ago)` : "";
-    metaEl.textContent = `Born ${birthDate}${suffix}`;
+  function renderAbout() {
+    const about = model.about || {};
+
+    const aboutWindow = document.querySelector(".about-window");
+    const aboutImage = document.querySelector("#about-image");
+    const aboutNameEl = document.querySelector("#about-name");
+    const aboutContentEl = document.querySelector("#about-content");
+    const aboutAgeEl = document.querySelector("#about-age");
+
+    if (aboutWindow && about.imageAlt) {
+      aboutWindow.setAttribute("aria-label", about.imageAlt);
+    }
+
+    if (aboutImage) {
+      aboutImage.src = about.image || "/images/frog.png";
+      aboutImage.alt = about.imageAlt || "";
+    }
+
+    if (aboutNameEl) {
+      aboutNameEl.textContent = about.name || "";
+    }
+
+    if (aboutContentEl) {
+      aboutContentEl.innerHTML = withExternalLinkAttrs(about.contentHtml || "");
+    }
+
+    if (aboutAgeEl) {
+      const birthDate = about.birthDate || "";
+      if (!birthDate) {
+        aboutAgeEl.textContent = "";
+      } else {
+        const age = yearsAgo(birthDate);
+        const suffix = typeof age === "number" && age >= 0 ? ` (${age} years ago)` : "";
+        aboutAgeEl.textContent = `Born ${birthDate}${suffix}`;
+      }
+    }
   }
 
   function setupContactActions() {
@@ -415,9 +449,10 @@ export function createUI({ model, onOpenDetail, onNavigateSection }) {
   }
 
   function init() {
+    renderHomeIntro();
+    renderAbout();
     renderFeatured(model.featured);
     renderLists();
-    renderAboutAge();
     setupContactActions();
     setupNav();
   }

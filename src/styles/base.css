@@ -22,7 +22,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Trebuchet MS", "Verdana", "Lucida Console", monospace;
+  font-family: "Trebuchet MS", "Verdana", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-size: 14px;
   line-height: 1.35;
 }
