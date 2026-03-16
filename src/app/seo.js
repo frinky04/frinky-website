@@ -25,13 +25,20 @@ function setMetaByName(name, content) {
   node.setAttribute("content", content || "");
 }
 
-function setMetaByProperty(property, content) {
-  const node = ensureMeta(`meta[property=\"${property}\"]`, () => {
-    const meta = document.createElement("meta");
-    meta.setAttribute("property", property);
-    return meta;
+function removeSocialMeta() {
+  const selectors = [
+    "meta[property^='og:']",
+    "meta[name='twitter:card']",
+    "meta[name='twitter:title']",
+    "meta[name='twitter:description']",
+    "meta[name='twitter:image']",
+  ];
+
+  selectors.forEach((selector) => {
+    document.head.querySelectorAll(selector).forEach((node) => {
+      node.remove();
+    });
   });
-  node.setAttribute("content", content || "");
 }
 
 function setCanonical(url) {
@@ -67,29 +74,14 @@ export function updateSeo({ route, entry, site }) {
 
   let title = `${siteName} | ${routeHeadline(route.section)}`;
   let description = siteDesc;
-  let imageUrl = "";
-  let ogType = "website";
 
   if (route.section === "detail" && entry) {
     title = `${entry.title} | ${siteName}`;
     description = entry.summary || stripHtml(entry.contentHtml).slice(0, 180) || siteDesc;
-    imageUrl = entry.image ? new URL(entry.image, window.location.origin).toString() : "";
-    ogType = "article";
   }
 
+  removeSocialMeta();
   document.title = title;
   setCanonical(absoluteUrl);
-
   setMetaByName("description", description);
-  setMetaByName("twitter:card", imageUrl ? "summary_large_image" : "summary");
-  setMetaByName("twitter:title", title);
-  setMetaByName("twitter:description", description);
-  setMetaByName("twitter:image", imageUrl);
-
-  setMetaByProperty("og:type", ogType);
-  setMetaByProperty("og:title", title);
-  setMetaByProperty("og:description", description);
-  setMetaByProperty("og:url", absoluteUrl);
-  setMetaByProperty("og:image", imageUrl);
-  setMetaByProperty("og:site_name", siteName);
 }
