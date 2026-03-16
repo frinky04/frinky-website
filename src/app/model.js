@@ -13,7 +13,6 @@ export function createModel(content) {
 
   const site = content?.site || {
     name: "Frinky",
-    description: "Frinky's portfolio of games, updates, and development posts.",
     url: "https://frinky.org",
     author: "Finn Rawlings",
   };
