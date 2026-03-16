@@ -26,7 +26,7 @@ const SITE_URL = normalizeBaseUrl(RAILWAY_PUBLIC_DOMAIN) || "https://frinky.org"
 
 const SITE = {
   name: "Frinky",
-  description: "Frinky's portfolio of games, updates, and development posts.",
+  // description: "Frinky's portfolio of games, updates, and development posts.",
   author: "Finn Rawlings",
   url: SITE_URL,
 };
@@ -325,7 +325,6 @@ async function writeRss(payload) {
     "<channel>",
     `  <title>${escapeXml(SITE.name)}</title>`,
     `  <link>${escapeXml(SITE.url)}</link>`,
-    `  <description>${escapeXml(SITE.description)}</description>`,
     `  <atom:link href="${escapeXml(`${SITE.url}/rss.xml`)}" rel="self" type="application/rss+xml" />`,
     `  <lastBuildDate>${escapeXml(new Date().toUTCString())}</lastBuildDate>`,
     itemsXml,
