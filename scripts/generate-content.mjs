@@ -12,6 +12,7 @@ const ROOT = path.resolve(__dirname, "..");
 const PAGES_DIR = path.join(ROOT, "pages");
 const OUTPUT_FILE = path.join(ROOT, "src", "generated", "content.generated.js");
 const PUBLIC_DIR = path.join(ROOT, "public");
+const STATIC_DIRS = ["images", "svgs"];
 
 function normalizeBaseUrl(rawValue) {
   const value = (rawValue || "").trim();
@@ -344,6 +345,45 @@ async function writeRobots() {
   ]);
 }
 
+async function copyDirectory(sourceDir, targetDir) {
+  await fs.mkdir(targetDir, { recursive: true });
+  const entries = await fs.readdir(sourceDir, { withFileTypes: true });
+
+  await Promise.all(
+    entries.map(async (entry) => {
+      const sourcePath = path.join(sourceDir, entry.name);
+      const targetPath = path.join(targetDir, entry.name);
+
+      if (entry.isDirectory()) {
+        await copyDirectory(sourcePath, targetPath);
+        return;
+      }
+
+      if (entry.isFile()) {
+        await fs.copyFile(sourcePath, targetPath);
+      }
+    })
+  );
+}
+
+async function syncStaticAssets() {
+  await Promise.all(
+    STATIC_DIRS.map(async (dirName) => {
+      const sourceDir = path.join(ROOT, dirName);
+      const targetDir = path.join(PUBLIC_DIR, dirName);
+
+      try {
+        await fs.access(sourceDir);
+      } catch {
+        return;
+      }
+
+      await fs.rm(targetDir, { recursive: true, force: true });
+      await copyDirectory(sourceDir, targetDir);
+    })
+  );
+}
+
 export async function generateContent() {
   const bucket = { post: [], game: [] };
 
@@ -366,6 +406,7 @@ export async function generateContent() {
 
   await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
   await fs.mkdir(PUBLIC_DIR, { recursive: true });
+  await syncStaticAssets();
 
   await fs.writeFile(
     OUTPUT_FILE,
