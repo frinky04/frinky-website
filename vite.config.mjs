@@ -2,13 +2,11 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { defineConfig } from "vite";
 import { generateContent } from "./scripts/generate-content.mjs";
-import { daysAgo, yearsAgo } from "./src/app/date.js";
+import { formatBirthDateLabel, formatDateWithRelative, formatEntryMeta } from "./src/app/date.js";
+import { DEFAULT_IMAGE_PATH, getRouteMeta } from "./src/app/route-meta.js";
 import { routeToPath } from "./src/app/routing.js";
 
 const PAGES_GLOB = /[\\/]pages[\\/].*\.md$/;
-const DEFAULT_SITE_URL = "https://frinky.org";
-const DEFAULT_DESCRIPTION = "Frinky's portfolio of games, updates, and development posts.";
-const DEFAULT_IMAGE_PATH = "/images/frog.png";
 const SECTION_IDS = ["home", "posts-all", "games-all", "about", "contact", "detail"];
 
 function escapeHtml(value) {
@@ -18,24 +16,6 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
-}
-
-function stripHtml(html) {
-  return String(html || "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function toAbsoluteUrl(base, candidate, fallback = "") {
-  const value = String(candidate || fallback || "").trim();
-  if (!value) return "";
-
-  try {
-    return new URL(value, base).toString();
-  } catch {
-    return "";
-  }
 }
 
 function upsertHeadTag(html, regex, tagLine) {
@@ -83,38 +63,6 @@ function toggleClassInAttrs(attrs, className, enabled) {
   return `${attrs} class="${escapeHtml(classValue)}"`;
 }
 
-function sectionDescription(payload, section) {
-  const siteDescription = payload?.site?.description || DEFAULT_DESCRIPTION;
-
-  switch (section) {
-    case "about":
-      return stripHtml(payload?.about?.contentHtml || "").slice(0, 180) || siteDescription;
-    case "contact":
-      return "Contact Finn Rawlings through email, X, Discord, GitHub, or YouTube.";
-    case "posts-all":
-      return "Posts, updates, and development notes from Frinky.";
-    case "games-all":
-      return "Games built and published by Frinky.";
-    default:
-      return payload?.home?.summary || siteDescription;
-  }
-}
-
-function routeHeadline(section, siteName) {
-  switch (section) {
-    case "about":
-      return `About | ${siteName}`;
-    case "contact":
-      return `Contact | ${siteName}`;
-    case "posts-all":
-      return `Posts | ${siteName}`;
-    case "games-all":
-      return `Games | ${siteName}`;
-    default:
-      return siteName;
-  }
-}
-
 function entryPath(entry) {
   if (!entry?.slug) return "/";
   return routeToPath({
@@ -136,10 +84,7 @@ function renderListItems(items, type) {
     .map((item) => {
       const title = escapeHtml(item.title || item.text || "Untitled");
       const date = item.date ? `[${escapeHtml(item.date)}]` : "";
-      const meta =
-        type === "experience"
-          ? escapeHtml(item.meta ?? "")
-          : escapeHtml(daysAgo(item.sortDate || item.date) || item.date || item.meta || "");
+      const meta = escapeHtml(formatEntryMeta(item, type));
 
       const linkHtml =
         type === "post" || type === "game"
@@ -162,9 +107,7 @@ function renderFeaturedBlurb(entry) {
 
   const title = escapeHtml(entry.title || "Untitled");
   const summary = escapeHtml(entry.summary || "No description available.");
-  const dateText = escapeHtml(entry.date || "");
-  const relative = escapeHtml(daysAgo(entry.sortDate || entry.date));
-  const meta = `${dateText}${relative ? ` (${relative})` : ""}`;
+  const meta = escapeHtml(formatDateWithRelative(entry));
 
   return [
     `<div class="feature-blurb-title">${title}</div>`,
@@ -209,8 +152,6 @@ function applySharedContent(html, payload) {
   const siteName = payload?.site?.name || "Frinky";
   const featured = payload?.featured || payload?.games?.[0] || null;
   const about = payload?.about || {};
-  const aboutAge = about.birthDate ? yearsAgo(about.birthDate) : null;
-  const aboutSuffix = typeof aboutAge === "number" && aboutAge >= 0 ? ` (${aboutAge} years ago)` : "";
 
   let output = html;
   output = replaceElementInnerById(output, "home-intro-content", payload?.home?.contentHtml || "");
@@ -226,7 +167,7 @@ function applySharedContent(html, payload) {
   output = replaceElementInnerById(
     output,
     "about-age",
-    about.birthDate ? escapeHtml(`Born ${about.birthDate}${aboutSuffix}`) : ""
+    escapeHtml(formatBirthDateLabel(about.birthDate))
   );
 
   output = updateOpeningTagById(output, "feature-link", (attrs) => {
@@ -302,50 +243,8 @@ function injectRouteSeo(indexHtml, meta) {
   return html.replace("</head>", `${block}\n</head>`);
 }
 
-function buildRouteMeta(route, payload, entry) {
-  const siteName = payload?.site?.name || "Frinky";
-  const siteUrl = payload?.site?.url || DEFAULT_SITE_URL;
-  const siteDescription = payload?.site?.description || DEFAULT_DESCRIPTION;
-
-  if (route.section === "detail" && entry) {
-    const url = toAbsoluteUrl(siteUrl, routeToPath(route));
-    const image = toAbsoluteUrl(siteUrl, entry.image || DEFAULT_IMAGE_PATH, DEFAULT_IMAGE_PATH);
-    return {
-      siteName,
-      title: `${entry.title || "Untitled"} | ${siteName}`,
-      description: String(entry.summary || stripHtml(entry.contentHtml).slice(0, 180) || siteDescription),
-      url,
-      image,
-      ogType: route.type === "post" ? "article" : "website",
-      twitterCard: image ? "summary_large_image" : "summary",
-    };
-  }
-
-  const routePath = routeToPath(route);
-  const url = toAbsoluteUrl(siteUrl, routePath);
-  const sectionImageSource =
-    route.section === "about"
-      ? payload?.about?.image || DEFAULT_IMAGE_PATH
-      : payload?.featured?.image || payload?.about?.image || DEFAULT_IMAGE_PATH;
-  const image = toAbsoluteUrl(
-    siteUrl,
-    sectionImageSource,
-    DEFAULT_IMAGE_PATH
-  );
-
-  return {
-    siteName,
-    title: routeHeadline(route.section, siteName),
-    description: sectionDescription(payload, route.section),
-    url,
-    image,
-    ogType: "website",
-    twitterCard: image ? "summary_large_image" : "summary",
-  };
-}
-
 function buildPrerenderedRouteHtml(indexHtml, payload, route, entry) {
-  const meta = buildRouteMeta(route, payload, entry);
+  const meta = getRouteMeta({ route, entry, content: payload });
   let html = injectRouteSeo(indexHtml, meta);
   html = applySharedContent(html, payload);
   html = applyRouteVisibility(html, route);
@@ -423,7 +322,7 @@ function contentPlugin() {
       try {
         indexHtml = await fs.readFile(indexPath, "utf8");
       } catch (error) {
-        this.__logger?.warn(`[content] skipped social route html generation: ${(error && error.message) || error}`);
+        this.__logger?.warn(`[content] skipped prerendered route html generation: ${(error && error.message) || error}`);
         return;
       }
 

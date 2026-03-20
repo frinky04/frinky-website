@@ -29,20 +29,20 @@ function navigate(route, mode = "none") {
       const fallback = { section: "home" };
       updateHistory(fallback, mode === "none" ? "none" : "replace");
       ui.showSection("home");
-      updateSeo({ route: fallback, site: model.site });
+      updateSeo({ route: fallback, content: model });
       return;
     }
 
     ui.renderDetail(entry, normalized.type);
     ui.showSection("detail");
     updateHistory(normalized, mode);
-    updateSeo({ route: normalized, entry, site: model.site });
+    updateSeo({ route: normalized, entry, content: model });
     return;
   }
 
   ui.showSection(normalized.section);
   updateHistory(normalized, mode);
-  updateSeo({ route: normalized, site: model.site });
+  updateSeo({ route: normalized, content: model });
 }
 
 window.addEventListener("popstate", () => {

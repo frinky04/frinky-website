@@ -27,3 +27,25 @@ export function yearsAgo(dateString) {
   if (!hasHadBirthday) years -= 1;
   return Math.max(years, 0);
 }
+
+export function formatEntryMeta(item, type) {
+  if (type === "experience") return item?.meta ?? "";
+  if (type === "game") return daysAgo(item?.sortDate || item?.date) || item?.date || item?.meta || "";
+  return daysAgo(item?.sortDate || item?.date) || item?.meta || "";
+}
+
+export function formatDateWithRelative(item) {
+  const dateText = item?.date || "";
+  const relative = daysAgo(item?.sortDate || item?.date);
+  if (!dateText) return relative || "";
+  return `${dateText}${relative ? ` (${relative})` : ""}`;
+}
+
+export function formatBirthDateLabel(dateString) {
+  const birthDate = String(dateString || "").trim();
+  if (!birthDate) return "";
+
+  const age = yearsAgo(birthDate);
+  const suffix = typeof age === "number" && age >= 0 ? ` (${age} years ago)` : "";
+  return `Born ${birthDate}${suffix}`;
+}
