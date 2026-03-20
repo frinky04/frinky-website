@@ -116,7 +116,7 @@ marked.use({
 
 marked.setOptions({
   gfm: true,
-  breaks: false,
+  breaks: true,
   headerIds: false,
   mangle: false,
 });

@@ -5,6 +5,7 @@ image: images/1.3_update.webp
 date: 20 Mar 2025
 sortDate: "2026-3-20"
 summary: Achievements, QoL, and Bug Squashing
+
 ---
 
 It's been a while... This update has been on the backburner for quite some time, now that I'm unemployed again, it's probably a good time to put it out (alongside the Spring sale)
@@ -17,8 +18,9 @@ While right now, I don't have any future plans for Dishwashing Simulator updates
 
 I've read all the various requests and critiques of the game, and I agree (for the most part, ||the parkour is peak and you can't change my mind||) I'd love to fix and change so many things, but it probably won't happen; I consider the game "done." So any updates will be pretty similar to this one. Hopefully you stick around for my next games!
 
-If you want to stay updated, join the Discord: https://discord.gg/frinky
-And checkout my website: https://frinky.org/
+[Discord Link](https://discord.gg/frinky)
+[Steam Post](https://store.steampowered.com/news/app/2747780/view/509608484353868274)
+[Buy the Game](https://store.steampowered.com/app/2747780/Dishwashing_Simulator/)
 
 # Patch Notes
 
