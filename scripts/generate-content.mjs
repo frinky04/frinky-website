@@ -5,7 +5,7 @@ import matter from "gray-matter";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 import { z } from "zod";
-import { parseDateInputToEpoch } from "../src/app/date-parse.js";
+import { normalizeDateDisplay, parseDateInputToEpoch } from "../src/app/date-parse.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -469,7 +469,7 @@ async function readCollection({ type, dir }) {
       type,
       title: frontmatter.title.trim(),
       slug,
-      date: frontmatter.date.trim(),
+      date: normalizeDateDisplay(frontmatter.date),
       sortDate,
       sortEpoch,
       summary,
@@ -523,7 +523,7 @@ async function readAboutPage() {
 
   return {
     name: frontmatter.name.trim(),
-    birthDate: (frontmatter.birthDate || "").trim(),
+    birthDate: normalizeDateDisplay(frontmatter.birthDate || ""),
     image: normalizeUrl(frontmatter.image || "/images/frog.png"),
     imageAlt: (frontmatter.imageAlt || "").trim(),
     contentHtml: sanitizeAndRenderMarkdown(content),

@@ -34,6 +34,8 @@ const STRICT_DATE_FORMATS = [
   "MMMM D, YYYY",
 ];
 
+const DEFAULT_DISPLAY_FORMAT = "DD MMM YYYY";
+
 export function parseDateInput(input) {
   if (typeof input !== "string") return null;
   const value = input.trim();
@@ -51,4 +53,15 @@ export function parseDateInput(input) {
 export function parseDateInputToEpoch(input) {
   const parsed = parseDateInput(input);
   return parsed ? parsed.getTime() : 0;
+}
+
+export function normalizeDateDisplay(input, format = DEFAULT_DISPLAY_FORMAT) {
+  if (typeof input !== "string") return "";
+  const value = input.trim();
+  if (!value) return "";
+
+  const parsed = parseDateInput(value);
+  if (!parsed) return value;
+
+  return dayjs(parsed).format(format);
 }

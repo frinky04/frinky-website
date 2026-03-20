@@ -77,7 +77,7 @@ export function createUI({ model, onOpenDetail, onNavigateSection }) {
     games: {
       items: model.games,
       type: "game",
-      meta: (item) => item.date || "",
+      meta: (item) => daysAgo(item.sortDate || item.date) || item.date || "",
     },
   };
 
