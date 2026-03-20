@@ -316,7 +316,8 @@ export function createUI({ model, onOpenDetail, onNavigateSection }) {
     if (blurbEl) {
       const title = game.title || "Untitled";
       const datePart = game.date ? `${game.date}` : "";
-      const ago = game.sortDate || game.date ? ` (${daysAgo(game.sortDate || game.date)})` : "";
+      const relative = daysAgo(game.sortDate || game.date);
+      const ago = relative ? ` (${relative})` : "";
       const body = game.summary || "No description available.";
 
       blurbEl.innerHTML = `

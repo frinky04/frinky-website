@@ -10,6 +10,7 @@ export function daysAgo(dateString) {
   const now = new Date();
   const ms = now - target;
   const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+  if (days < 0) return "";
   return `${days} days ago`;
 }
 
