@@ -36,6 +36,7 @@ During development, `npm run dev` auto-regenerates content when Markdown files c
 - Frontmatter is strict. Unknown keys are rejected.
 - `slug` values (where used) must match: `^[a-z0-9-]+$`
 - Use quotes around `sortDate` values (for example: `"2026-03-16"`).
+- Dates support multiple formats (for example: `2026-03-16`, `2026/3/16`, `16 Mar 2026`, `March 16, 2026`, `16/3/2026`).
 - Local images should be referenced as `images/...` or `/images/...`.
 - External links must be full URLs (`https://...`).
 

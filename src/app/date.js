@@ -1,7 +1,7 @@
+import { parseDateInput } from "./date-parse.js";
+
 export function parseDate(dateString) {
-  const parsed = dateString ? new Date(dateString) : null;
-  if (!parsed || Number.isNaN(parsed.getTime())) return null;
-  return parsed;
+  return parseDateInput(dateString);
 }
 
 export function daysAgo(dateString) {

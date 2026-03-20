@@ -5,6 +5,7 @@ import matter from "gray-matter";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 import { z } from "zod";
+import { parseDateInputToEpoch } from "../src/app/date-parse.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -191,9 +192,7 @@ function normalizeHtmlUrls(html) {
 }
 
 function toEpoch(input) {
-  if (!input || typeof input !== "string") return 0;
-  const timestamp = Date.parse(input);
-  return Number.isNaN(timestamp) ? 0 : timestamp;
+  return parseDateInputToEpoch(input);
 }
 
 function escapeXml(value) {

@@ -16,5 +16,8 @@
     "sanitize-html": "^2.17.0",
     "vite": "^7.1.5",
     "zod": "^4.1.11"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.20"
   }
 }
