@@ -5,7 +5,7 @@ date: 06 Jul 2026
 sortDate: "06 Jul 2026"
 image: images/minefractal.png
 downloadUrl: https://frinkyyy.itch.io/minefractal
-summary: A short top-down atmospheric puzzle game about boundary warp and screen wrap.
+summary: Explore a procedural voxel fractal-inspired world to find artifacts and portals.
 featured: true
 ---
 
